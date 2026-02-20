@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation Management System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
+        .navbar { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .table th { background-color: #f1f5f9; font-weight: 600; color: #475569; border-bottom: none; }
+        .btn-ai { background-color: #8b5cf6; color: white; border: none; transition: 0.2s all; }
+        .btn-ai:hover { background-color: #7c3aed; color: white; transform: translateY(-1px); }
+        .badge-symptoms { background-color: #e0e7ff; color: #4338ca; white-space: normal; text-align: left; }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4 py-3">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="#"> CMS Dashboard</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</nav>
+
+<div class="container">
+    <!-- Tabs -->
+    <ul class="nav nav-pills mb-4" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active px-4 py-2 fw-semibold" id="patients-tab" data-bs-toggle="pill" data-bs-target="#patients" type="button" role="tab">👤 Patients</button>
+        </li>
+        <li class="nav-item ms-2" role="presentation">
+            <button class="nav-link px-4 py-2 fw-semibold" id="consultations-tab" data-bs-toggle="pill" data-bs-target="#consultations" type="button" role="tab">📋 Consultations</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="pills-tabContent">
+
+        <!-- Patients Tab -->
+        <div class="tab-pane fade show active" id="patients" role="tabpanel">
+            <div class="card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0 fw-bold text-dark">Patients Record</h4>
+                    <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#patientModal">+ Add Patient</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Date of Birth</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patients-list">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consultations Tab -->
+        <div class="tab-pane fade" id="consultations" role="tabpanel">
+            <div class="card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0 fw-bold text-dark">Consultations</h4>
+                    <button class="btn btn-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#consultationModal" onclick="populatePatientDropdown()">+ Add Consultation</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle" style="min-width: 900px;">
+                        <thead>
+                            <tr>
+                                <th width="15%">Patient</th>
+                                <th width="20%">Symptoms</th>
+                                <th width="20%">Diagnosis</th>
+                                <th width="30%">AI Summary</th>
+                                <th width="15%">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="consultations-list">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Patient Modal -->
+<div class="modal fade" id="patientModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold">Add New Patient</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="patientForm">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">FULL NAME</label>
+                        <input type="text" class="form-control" id="patientName" required placeholder="e.g. John Doe">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">EMAIL ADDRESS</label>
+                        <input type="email" class="form-control" id="patientEmail" required placeholder="john@example.com">
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-bold">DATE OF BIRTH</label>
+                        <input type="date" class="form-control" id="patientDob" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Save Patient</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Consultation Modal -->
+<div class="modal fade" id="consultationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold">Add Consultation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="consultationForm">
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">SELECT PATIENT</label>
+                        <select class="form-select" id="consultationPatient" required>
+                            <!-- Options via JS -->
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">SYMPTOMS (Required)</label>
+                        <textarea class="form-control" id="consultationSymptoms" rows="3" required placeholder="Describe symptoms..."></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label text-muted small fw-bold">DIAGNOSIS (Optional)</label>
+                        <textarea class="form-control" id="consultationDiagnosis" rows="2" placeholder="Professional diagnosis..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Save Consultation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    const API_URL = '/api';
+
+    // Fetch and render data on load
+    document.addEventListener("DOMContentLoaded", () => {
+        fetchPatients();
+        fetchConsultations();
+    });
+
+    // Handle Forms
+    document.getElementById('patientForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post(`${API_URL}/patients/`, {
+                full_name: document.getElementById('patientName').value,
+                email: document.getElementById('patientEmail').value,
+                date_of_birth: document.getElementById('patientDob').value
+            });
+            bootstrap.Modal.getInstance(document.getElementById('patientModal')).hide();
+            e.target.reset();
+            fetchPatients();
+        } catch (error) {
+            alert('Failed to save patient. Check if email is unique.');
+        }
+    });
+
+    document.getElementById('consultationForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post(`${API_URL}/consultations/`, {
+                patient: document.getElementById('consultationPatient').value,
+                symptoms: document.getElementById('consultationSymptoms').value,
+                diagnosis: document.getElementById('consultationDiagnosis').value || null
+            });
+            bootstrap.Modal.getInstance(document.getElementById('consultationModal')).hide();
+            e.target.reset();
+            fetchConsultations();
+        } catch (error) {
+            alert('Failed to save consultation.');
+        }
+    });
+
+    // Populate Functions
+    async function fetchPatients() {
+        try {
+            const res = await axios.get(`${API_URL}/patients/`);
+            const tbody = document.getElementById('patients-list');
+            tbody.innerHTML = '';
+            res.data.forEach(p => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="text-muted">#${p.id}</td>
+                        <td class="fw-semibold">${p.full_name}</td>
+                        <td>${p.email}</td>
+                        <td class="text-muted">${p.date_of_birth}</td>
+                    </tr>
+                `;
+            });
+        } catch (e) {
+            console.error('Failed to load patients', e);
+        }
+    }
+
+    async function fetchConsultations() {
+        try {
+            const res = await axios.get(`${API_URL}/consultations/`);
+            const tbody = document.getElementById('consultations-list');
+            tbody.innerHTML = '';
+            res.data.forEach(c => {
+                const summary = c.ai_summary ? 
+                    `<span class="text-muted small">${c.ai_summary}</span>` : 
+                    `<span class="text-muted fst-italic small">No summary generated.</span>`;
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="fw-semibold">${c.patient.full_name}</td>
+                        <td><div class="badge badge-symptoms p-2 rounded">${c.symptoms}</div></td>
+                        <td>${c.diagnosis || '<span class="text-muted">-</span>'}</td>
+                        <td id="summary-${c.id}">${summary}</td>
+                        <td>
+                            <button class="btn btn-sm btn-ai w-100" id="btn-${c.id}" onclick="generateSummary(${c.id})">
+                                Generate AI Summary
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (e) {
+            console.error('Failed to load consultations', e);
+        }
+    }
+
+    async function populatePatientDropdown() {
+        try {
+            const res = await axios.get(`${API_URL}/patients/`);
+            const select = document.getElementById('consultationPatient');
+            select.innerHTML = '<option value="" disabled selected>Select a patient...</option>';
+            res.data.forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.full_name}</option>`;
+            });
+        } catch (e) {
+            console.error('Failed to load patients for dropdown', e);
+        }
+    }
+
+    // AI Generation
+    async function generateSummary(id) {
+        const btn = document.getElementById(`btn-${id}`);
+        const originalText = btn.innerHTML;
+        
+        // Show spinner
+        btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Generating...`;
+        btn.disabled = true;
+
+        try {
+            // Note: Our endpoint is a POST with no body needed
+            const res = await axios.post(`${API_URL}/consultations/${id}/generate-summary/`);
+            
+            // Update table cell
+            document.getElementById(`summary-${id}`).innerHTML = `<span class="text-muted small">${res.data.ai_summary}</span>`;
+            
+            // Restore button success state temporarily
+            btn.innerHTML = `Generated!`;
+            btn.classList.replace('btn-ai', 'btn-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.replace('btn-success', 'btn-ai');
+                btn.disabled = false;
+            }, 3000);
+
+        } catch (e) {
+            console.error('AI Gen Failed', e);
+            alert(e.response?.data?.error || 'Failed to generate AI summary.');
+            btn.innerHTML = `Failed`;
+            btn.classList.replace('btn-ai', 'btn-danger');
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.replace('btn-danger', 'btn-ai');
+                btn.disabled = false;
+            }, 3000);
+        }
+    }
+</script>
+</body>
+</html>
