@@ -5,7 +5,7 @@ A production-ready Full-Stack Django application for managing patient consultati
 ## 🚀 Features
 - **Patient Management**: Create and list patients.
 - **Consultation Tracking**: Record symptoms and diagnoses.
-- **AI Summarization**: Integrates with **Google Gemini 1.5 Flash** to generate professional medical summaries.
+- **AI Summarization**: Integrates with **Google Gemini 2.5 Flash** to generate professional medical summaries.
 - **Modern Dashboard**: Responsive UI built with Bootstrap 5 and Axios.
 - **API Documentation**: Automated Swagger/OpenAPI documentation.
 
